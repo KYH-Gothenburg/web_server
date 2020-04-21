@@ -2,8 +2,10 @@ import socket
 import os
 import mimetypes
 
+
 class TCPServer:
-    host = '127.0.0.1'
+    # ToDo: Make this class abstract
+    host = ''
     port = 8888
 
     def start(self):
@@ -17,10 +19,10 @@ class TCPServer:
             conn, addr = s.accept()
             print("Connected to", addr)
             data = conn.recv(1024)
-
+            # ToDo: Kick off each client in a separate thread
             response = self.handle_request(data)
             try:
-                if(response):
+                if response:
                     conn.sendall(response)
             except TypeError as e:
                 print("Error:", e)
@@ -40,6 +42,7 @@ class HTTPServer(TCPServer):
         'Server': 'The Ultimate Super Server',
         'Content-Type': 'text/html',
     }
+    # ToDo: Add more status codes.
     status_codes = {
         200: 'OK',
         404: 'Not Found',
@@ -88,6 +91,10 @@ class HTTPServer(TCPServer):
 
         return bytes(f"{response_line}{response_headers}\r\n{response_body}", 'utf-8')
 
+    def handle_post(self):
+        # ToDo: Implement this
+        pass
+
     def handle_options(self):
         response_line = self.response_line(200)
         extra_headers = {
@@ -121,7 +128,6 @@ class HTTPRequest:
         self.method = None
         self.uri = None
         self.http_version = 'HTTP/1.1'
-        self.headers = {}
 
     def parse(self, data):
         line = str(data).split("\\r\\n")
